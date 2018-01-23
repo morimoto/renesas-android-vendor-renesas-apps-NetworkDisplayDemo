@@ -1,0 +1,48 @@
+How to run demo:
+##################################################
+### AGL receiver side:
+
+Build and flash agl branch dab_4.0.2.xml
+Copy python files from CastScreen_receiver_agl dir to AGL
+Modify /etc/xdg/weston.ini on AGL to match CastScreenDemo/weston.ini
+
+systemctl restart weston # to apply weston.ini
+
+Connect AGL to the same network with Android board
+
+python CastScreen_receiver_agl/wayland_receiver.py
+
+###################################################
+### Ubuntu receiver side:
+
+python CastScreen_receiver_agl/cs_receiver.py
+###################################################
+### Android sender side:
+
+adb root
+adb shell setprop persist.enable_task_snapshots false
+### To prevent memory leak when opening multiple apps
+
+adb install -r -g -t sender.apk
+
+Ensure wayland_receiver.py is running on AGL and sender is in same subnet as receiver
+
+Start castscreen on android. Two ways:
+
+./start_castscreen_with_ip.sh [AGL_RECEIVER_IP]
+
+or
+
+Using android app gui:
+- Start CastScreen app.
+- Select receiver
+- Press start
+- Use keyboard (Tab & Enter keys) to navigate through confirmation dialog
+- Cast screen should be running now
+
+To cast google maps:
+
+./start_maps_virtual.sh [VIRTUAL_DISPLAY_ID]
+
+#Launch google maps on virtual display
+#VIRTUAL_DISPLAY_ID is shown in android application
