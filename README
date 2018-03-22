@@ -10,20 +10,17 @@ systemctl restart weston # to apply weston.ini
 
 Connect AGL to the same network with Android board
 
-python CastScreen_receiver_agl/wayland_receiver.py
+python wayland_receiver.py
 
 ###################################################
 ### Ubuntu receiver side:
-
-python CastScreen_receiver_agl/cs_receiver.py
+Install gst-plugins-bad
+python ubuntu_receiver.py
 ###################################################
 ### Android sender side:
 
-adb root
-adb shell setprop persist.enable_task_snapshots false
-### To prevent memory leak when opening multiple apps
-
-adb install -r -g -t sender.apk
+#To be able to launch any activity on virtual display:
+adb shell settings put global force_resizable_activities 1
 
 Ensure wayland_receiver.py is running on AGL and sender is in same subnet as receiver
 
@@ -46,3 +43,4 @@ To cast google maps:
 
 #Launch google maps on virtual display
 #VIRTUAL_DISPLAY_ID is shown in android application
+ in android application
