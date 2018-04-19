@@ -5,6 +5,7 @@ LOCAL_RESOURCE_DIR := vendor/renesas/NetworkDisplayDemo/SenderApp/res
 
 LOCAL_MODULE_TAGS := optional
 LOCAL_SDK_VERSION := current
+LOCAL_PRIVILEGED_MODULE := true
 
 LOCAL_PACKAGE_NAME := NetworkDisplayDemo
 
