@@ -42,7 +42,8 @@ class MyTCPHandler(SocketServer.BaseRequestHandler):
             'omxh264dec',
             'no-reorder=true',
             '!',
-            'waylandsink',
+            'fpsdisplaysink',
+            'sync=false'
         ], stdin=PIPE, stdout=PIPE)
         skiped_metadata = False
         while True:

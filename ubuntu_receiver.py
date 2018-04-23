@@ -19,7 +19,19 @@ class MyTCPHandler(SocketServer.BaseRequestHandler):
     def handle(self):
         if SAVE_TO_FILE:
             f = Popen('video.raw', 'wb')
-        p = Popen(['gst-launch-1.0','-vvvv', 'fdsrc', '!', 'h264parse', '!', 'avdec_h264', '!', 'autovideosink'], stdin=PIPE, stdout=PIPE)
+        p = Popen([
+            'gst-launch-1.0',
+            '-vvvv',
+            'fdsrc',
+            'do-timestamp=true',
+            '!',
+            'h264parse',
+            '!',
+            'avdec_h264',
+            '!',
+            'fpsdisplaysink',
+            'sync=false'
+        ], stdin=PIPE, stdout=PIPE)
 
         skiped_metadata = False
         while True:
