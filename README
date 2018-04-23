@@ -1,46 +1,55 @@
 How to run demo:
+
 ##################################################
 ### AGL receiver side:
 
-Build and flash agl branch dab_4.0.2.xml
-Copy python files from CastScreen_receiver_agl dir to AGL
-Modify /etc/xdg/weston.ini on AGL to match CastScreenDemo/weston.ini
+* Build and flash AGL branch dab_4.0.2.xml.
+* Copy `SocketServer.py` and `wayland_receiver.py` to AGL.
+* Replace the contents of `/etc/xdg/weston.ini` on AGL with `NetworkDisplayDemo/weston.ini`.
+* Restart weston to apply new config:
 
-systemctl restart weston # to apply weston.ini
+systemctl restart weston
 
-Connect AGL to the same network with Android board
+* Connect AGL to the same network with Android board and start receiver server:
 
-python wayland_receiver.py
+python3 wayland_receiver.py
 
 ###################################################
 ### Ubuntu receiver side:
-Install gst-plugins-bad
+
+* Install gst-plugins-bad (exact package may vary):
+sudo apt install gir1.2-gst-plugins-bad-1.0
+
+* Run receiver server:
 python ubuntu_receiver.py
+
 ###################################################
 ### Android sender side:
 
-#To be able to launch any activity on virtual display:
+* To be able to launch any activity on virtual display:
+
 adb shell settings put global force_resizable_activities 1
 
-Ensure wayland_receiver.py is running on AGL and sender is in same subnet as receiver
+* Ensure wayland_receiver.py is running on AGL and sender is in same subnet as receiver.
 
-Start castscreen on android. Two ways:
+* Start castscreen on Android.
 
-./start_castscreen_with_ip.sh [AGL_RECEIVER_IP]
+  Two ways:
 
-or
+  ./start_castscreen_with_ip.sh [AGL_RECEIVER_IP]
 
-Using android app gui:
-- Start CastScreen app.
-- Select receiver
-- Press start
-- Use keyboard (Tab & Enter keys) to navigate through confirmation dialog
-- Cast screen should be running now
+  or
 
-To cast google maps:
+  Using Android app GUI:
 
-./start_maps_virtual.sh [VIRTUAL_DISPLAY_ID]
+  - Start NetworkDisplayDemo app.
+  - Select receiver.
+  - Press 'Start'.
+  - Use keyboard (Tab & Enter keys) to navigate through confirmation dialog.
+  - Screencast should be running now.
 
-#Launch google maps on virtual display
-#VIRTUAL_DISPLAY_ID is shown in android application
- in android application
+* To cast google maps:
+
+  # Launches Google Maps on virtual display
+  # VIRTUAL_DISPLAY_ID is shown in Android application
+  ./start_maps_virtual.sh [VIRTUAL_DISPLAY_ID]
