@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.hardware.display.DisplayManager;
 import android.media.MediaCodecInfo;
+import android.media.MediaFormat;
 import android.media.projection.MediaProjectionManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -59,8 +60,6 @@ import java.util.HashMap;
 
 import static android.renesas.castscreendemo.Config.DEFAULT_VIDEO_FRAMERATE;
 import static android.renesas.castscreendemo.Config.EXTRA_RECEIVER_IP;
-import static android.renesas.castscreendemo.Config.VIRTUAL_DISPLAY_TYPE_PRESENTATION;
-import static android.renesas.castscreendemo.Config.VIRTUAL_DISPLAY_TYPE_SCREENCAST;
 import static android.view.Display.STATE_OFF;
 
 
@@ -70,6 +69,7 @@ public class MainActivity extends Activity implements DisplayManager.DisplayList
     private static final String PREF_COMMON = "common";
     private static final String PREF_KEY_PACKAGE_NAME = "input_receiver";
     private static final String PREF_KEY_ENCODER = "encoder";
+    private static final String PREF_KEY_VIDEO_FORMAT = "format";
     private static final String PREF_KEY_RECEIVER = "receiver";
     private static final String PREF_KEY_RESOLUTION = "resolution";
     private static final String PREF_KEY_BITRATE = "bitrate";
@@ -92,14 +92,15 @@ public class MainActivity extends Activity implements DisplayManager.DisplayList
             1024000 // 1 Mbps
     };
 
+    private static final String[] FORMAT_OPTIONS = {
+            MediaFormat.MIMETYPE_VIDEO_AVC,
+            MediaFormat.MIMETYPE_VIDEO_VP8,
+            MediaFormat.MIMETYPE_VIDEO_H263
+    };
+
     private static final int[] BITRATE_MODE_OPTIONS = {
             MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_VBR,
             MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_CBR
-    };
-
-    private static final int[] DISPLAY_MODE_OPTIONS = {
-            VIRTUAL_DISPLAY_TYPE_SCREENCAST,
-            VIRTUAL_DISPLAY_TYPE_PRESENTATION
     };
 
 
@@ -276,6 +277,7 @@ public class MainActivity extends Activity implements DisplayManager.DisplayList
 
 
         mReceiverTextView = (TextView) findViewById(R.id.receiver_textview);
+        setupFormatSpinner();
         setupEncoderSpinner();
         setupBitrateModeSpinner();
         setupDefaultFramerate();
@@ -386,6 +388,8 @@ public class MainActivity extends Activity implements DisplayManager.DisplayList
             Log.e(TAG, "No matching encoders found");
             return;
         }
+        mSelectedEncoderName = mMatchingEncoders.get(0);
+        encoderSpinner.setSelection(0);
 
         ArrayAdapter<String> encoderAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item,android.R.id.text1,  mMatchingEncoders);
@@ -396,18 +400,48 @@ public class MainActivity extends Activity implements DisplayManager.DisplayList
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
 
                 mSelectedEncoderName = mMatchingEncoders.get(i);
-                mContext.getSharedPreferences(PREF_COMMON, 0).edit().putInt(PREF_KEY_ENCODER, i).apply();
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
                 mSelectedEncoderName = mMatchingEncoders.get(0);
-                mContext.getSharedPreferences(PREF_COMMON, 0).edit().putInt(PREF_KEY_ENCODER, 0).apply();
             }
         });
-        encoderSpinner.setSelection(mContext.getSharedPreferences(PREF_COMMON, 0)
-                .getInt(PREF_KEY_ENCODER,
-                        mMatchingEncoders.get(1).toLowerCase().contains("renesas")? 0 : 1 ));
+
+    }
+
+    private void setupFormatSpinner(){
+        mSelectedFormat=mContext.getSharedPreferences(PREF_COMMON, 0)
+                .getString(PREF_KEY_VIDEO_FORMAT,
+                        Config.DEFAULT_VIDEO_FORMAT );
+        Spinner spinner = (Spinner) findViewById(R.id.format_spinner);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item,android.R.id.text1,  FORMAT_OPTIONS);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                mSelectedFormat = FORMAT_OPTIONS[i];
+                mContext.getSharedPreferences(PREF_COMMON, 0).edit().putString(PREF_KEY_VIDEO_FORMAT, mSelectedFormat).apply();
+                setupEncoderSpinner();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                mSelectedFormat = Config.DEFAULT_VIDEO_FORMAT;
+                mContext.getSharedPreferences(PREF_COMMON, 0).edit().putString(PREF_KEY_VIDEO_FORMAT, mSelectedFormat).apply();
+                setupEncoderSpinner();
+            }
+        });
+        spinner.setSelection(0);
+        for (int i = 0; i < FORMAT_OPTIONS.length; i++) {
+            if(FORMAT_OPTIONS[i].contains(mSelectedFormat)){
+                spinner.setSelection(i);
+                break;
+            }
+        }
     }
 
     @Override
