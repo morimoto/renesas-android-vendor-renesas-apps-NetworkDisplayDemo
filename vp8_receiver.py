@@ -6,14 +6,14 @@ import select, socket
 import SocketServer
 
 HOST = ''
-REC_NAME = 'UbuntuReceiver'
+REC_NAME = 'VP8Receiver'
 PORT = 53515
 IP = '172.22.89.45'
 
 bufferSize = 1024
 meta_data = '{\
 "port":%d,\
-"name":"UbuntuReceiver @ %s",\
+"name":"Vp8Receiver @ %s",\
 "id":"%s",\
 "width":1280,"height":960,\
 "mirror":"h264",\
@@ -26,20 +26,18 @@ meta_data = '{\
 
 SAVE_TO_FILE = False
 
-
 class MyTCPHandler(SocketServer.BaseRequestHandler):
     def handle(self):
         p = Popen([
             'gst-launch-1.0',
-            '-vvvv',
+            '-vvv',
             'fdsrc',
             'do-timestamp=true',
             '!',
-            'h264parse',
-            'config-interval=1',
+            'ivfparse',
             'disable-passthrough=true',
             '!',
-            'avdec_h264',
+            'avdec_vp8',
             '!',
             'fpsdisplaysink',
             'sync=false'

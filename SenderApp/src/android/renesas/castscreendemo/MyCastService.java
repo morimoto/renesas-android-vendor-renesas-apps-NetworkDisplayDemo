@@ -261,8 +261,8 @@ package android.renesas.castscreendemo;
          MediaFormat format = MediaFormat.createVideoFormat(mSelectedFormat, mSelectedWidth, mSelectedHeight);
 
          format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
-         format.setInteger(MediaFormat.KEY_PROFILE, MediaCodecInfo.CodecProfileLevel.AVCProfileBaseline);
-         format.setInteger(MediaFormat.KEY_LEVEL, MediaCodecInfo.CodecProfileLevel.AVCLevel1);
+
+
          format.setInteger(MediaFormat.KEY_BIT_RATE, mSelectedBitrate);
          Log.w(TAG, "getVideoFormat: bitrate="+mSelectedBitrate );
          format.setInteger(MediaFormat.KEY_FRAME_RATE, mSelectedFrameRate);
@@ -270,7 +270,7 @@ package android.renesas.castscreendemo;
          format.setInteger(MediaFormat.KEY_BITRATE_MODE, mSelectedBitrateMode);
          format.setInteger(MediaFormat.KEY_CHANNEL_COUNT, 1);
          format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, DEFAULT_I_FRAME_INTERVAL);
-         //format.setInteger(MediaFormat.KEY_PRIORITY, 0);
+
 
         return format;
      }
@@ -318,6 +318,9 @@ package android.renesas.castscreendemo;
                     osw.write(format);
                     osw.flush();
                     mSocketOutputStream.flush();
+                    if (mSelectedFormat.equals(MediaFormat.MIMETYPE_VIDEO_VP8)) {
+                        mRecorder.writeHeader(mSocketOutputStream,mSelectedWidth,mSelectedHeight);
+                    }
                     return;
                 } catch (UnknownHostException e) {
                     e.printStackTrace();

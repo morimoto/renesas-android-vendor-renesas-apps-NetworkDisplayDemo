@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.Surface;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
@@ -28,6 +29,7 @@ public class Recorder {
     final Intent mStopCastIntent = new Intent(Config.ACTION_STOP_CAST);
     private MediaFormat mFormat;
     private Runnable mWriteDataRunnable;
+    private IvfWriter mIvfWriter;
 
     public Recorder(Context context, Handler handler) {
         this.mContext=context;
@@ -134,8 +136,11 @@ public class Recorder {
             public void run() {
                 if (mSocketOutputStream != null) {
                     try {
-
-                        mSocketOutputStream.write(buffer, offset, size);
+                        if (mIvfWriter != null) {
+                            mIvfWriter.writeFrame(buffer, mVideoBufferInfo.presentationTimeUs);
+                        } else {
+                            mSocketOutputStream.write(buffer, offset, size);
+                        }
 
                     } catch (IOException e) {
                         Log.e(TAG, "Failed to write data to socket, stop casting",e);
@@ -162,7 +167,16 @@ public class Recorder {
             mVideoEncoder.release();
             mVideoEncoder = null;
         }
+        if (mIvfWriter != null) {
+            mIvfWriter.close();
+            mIvfWriter = null;
+        }
         mVideoBufferInfo = null;
+    }
+
+    public void writeHeader(DataOutputStream stream, int selectedWidth, int selectedHeight) throws IOException {
+        mIvfWriter = new IvfWriter(stream, selectedWidth, selectedHeight);
+        mIvfWriter.writeHeader();
     }
 
 }
