@@ -4,15 +4,21 @@ How to run demo:
 ### AGL receiver side:
 
 * Build and flash AGL branch dab_4.0.2.xml.
-* Copy `SocketServer.py` and `wayland_receiver.py` to AGL.
-* Replace the contents of `/etc/xdg/weston.ini` on AGL with `NetworkDisplayDemo/weston.ini`.
-* Restart weston to apply new config:
 
+* Copy `SocketServer.py` and `receiver.py` to AGL board.
+
+* Replace the contents of `/etc/xdg/weston.ini` on AGL with `NetworkDisplayDemo/weston.ini`.
+
+* Restart weston to apply new config:
 systemctl restart weston
+
+* push required libs:
+agl/src/build/tmp/work/aarch64-agl-linux/gstreamer1.0-plugins-bad/1.6.3-r0/image/usr/lib/gstreamer-1.0/libgstdebugutilsbad.so -> /usr/lib/gstreamer-1.0/libgstdebugutilsbad.so
+agl/src/build/tmp/work/aarch64-agl-linux/gstreamer1.0-plugins-bad/1.6.3-r0/image/usr/lib/gstreamer-1.0/libgstivfparse.so -> /usr/lib/gstreamer-1.0/libgstivfparse.so
 
 * Connect AGL to the same network with Android board and start receiver server:
 
-python3 wayland_receiver.py
+./receiver.py
 
 ###################################################
 ### Ubuntu receiver side:
@@ -20,8 +26,8 @@ python3 wayland_receiver.py
 * Install gst-plugins-bad (exact package may vary):
 sudo apt install gir1.2-gst-plugins-bad-1.0
 
-* Run receiver server:
-python ubuntu_receiver.py
+* Start receiver:
+./receiver.py
 
 ###################################################
 ### Android sender side:
@@ -30,19 +36,12 @@ python ubuntu_receiver.py
 
 adb shell settings put global force_resizable_activities 1
 
-* Ensure wayland_receiver.py is running on AGL and sender is in same subnet as receiver.
+* Ensure receiver.py is running on AGL and sender is in same subnet as receiver.
 
 * Start castscreen on Android.
 
-  Two ways:
-
-  ./start_castscreen_with_ip.sh [AGL_RECEIVER_IP]
-
-  or
-
-  Using Android app GUI:
-
-  - Start NetworkDisplayDemo app.
+  - Start SenderApp on Android. (use ./open_cast_app.sh on host machine).
+  - Wait for receiver to be shown in the list.
   - Select receiver.
   - Press 'Start'.
   - Use keyboard (Tab & Enter keys) to navigate through confirmation dialog.
