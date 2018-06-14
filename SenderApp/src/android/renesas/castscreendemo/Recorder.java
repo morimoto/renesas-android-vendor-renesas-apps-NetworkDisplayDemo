@@ -168,7 +168,11 @@ public class Recorder {
             mVideoEncoder = null;
         }
         if (mIvfWriter != null) {
-            mIvfWriter.close();
+            try {
+                mIvfWriter.close();
+            } catch (IOException e){
+                e.printStackTrace();
+            }
             mIvfWriter = null;
         }
         mVideoBufferInfo = null;

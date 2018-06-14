@@ -1,7 +1,7 @@
 LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
-LOCAL_RESOURCE_DIR := vendor/renesas/NetworkDisplayDemo/SenderApp/res
+LOCAL_RESOURCE_DIR := $(LOCAL_PATH)/res
 
 LOCAL_MODULE_TAGS := optional
 LOCAL_SDK_VERSION := current
