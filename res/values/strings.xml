@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">NetworkDisplayDemo</string>
+    <string name="action_start">Start</string>
+    <string name="action_stop">Stop</string>
+    <string name="receiver">Receiver %1$s</string>
+    <string name="no_receiver">Using server mode</string>
+    <string name="casting_screen">Casting screen</string>
+    <string name="user_cancelled">User cancelled</string>
+
+    <string-array name="resolution_options">
+        <item>1920x1080 @ 320</item>
+        <item>1280x720 @ 320</item>
+        <item>800x480 @ 160</item>
+    </string-array>
+
+    <string-array name="bitrate_options">
+        <item>20 Mbps</item>
+        <item>15 Mbps</item>
+        <item>6 Mbps</item>
+        <item>4 Mbps</item>
+        <item>2 Mbps</item>
+        <item>1 Mbps</item>
+    </string-array>
+
+
+    <string-array name="bitrate_mode_options">
+        <item>VBR</item>
+        <item>CBR</item>
+    </string-array>
+</resources>
