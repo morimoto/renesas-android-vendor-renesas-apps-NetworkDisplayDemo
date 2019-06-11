@@ -1,54 +1,35 @@
-How to run demo:
+Host side:
+    To run demo on Ubuntu you need to install ffmpeg OR VLC version 3 (3.0.6).
 
-##################################################
-### AGL receiver side:
+###Method 1.
+    Install ffmpeg:
+sudo apt install ffmpeg
 
-* Build and flash AGL branch dab_4.0.2.xml.
+###Method 2
+    Install VLC 3.0.6:
+By default command `sudo apt-get install vlc` installs version 2, which is not supported by this demo.
+You need to add custom repositories to install version 3.0.6:
 
-* Copy `SocketServer.py` and `receiver.py` to AGL board.
+sudo add-apt-repository ppa:jonathonf/vlc-3
+sudo add-apt-repository ppa:jonathonf/ffmpeg-4
+sudo add-apt-repository ppa:jonathonf/meson
 
-* Replace the contents of `/etc/xdg/weston.ini` on AGL with `NetworkDisplayDemo/weston.ini`.
+sudo apt-get update && sudo apt-get install vlc
+##########################################
+Device side:
+- Install NetworkDisplayDemo apk on device.
+- Open app using GUI or command:
+    adb shell am start android.renesas.castscreendemo.test/.MainActivity
+- Select Streaming options.
+- Press START button.
+- Start receiver on host using command:
+Method 1:
+ffplay -i rtsp://DEVICE_IP_ADDRESS:12345
+  or
+Method 2:
+vlc rtsp://DEVICE_IP_ADDRESS:12345
 
-* Restart weston to apply new config:
-systemctl restart weston
+Demo should be running now.
 
-* push required libs:
-agl/src/build/tmp/work/aarch64-agl-linux/gstreamer1.0-plugins-bad/1.6.3-r0/image/usr/lib/gstreamer-1.0/libgstdebugutilsbad.so -> /usr/lib/gstreamer-1.0/libgstdebugutilsbad.so
-agl/src/build/tmp/work/aarch64-agl-linux/gstreamer1.0-plugins-bad/1.6.3-r0/image/usr/lib/gstreamer-1.0/libgstivfparse.so -> /usr/lib/gstreamer-1.0/libgstivfparse.so
-
-* Connect AGL to the same network with Android board and start receiver server:
-
-./receiver.py
-
-###################################################
-### Ubuntu receiver side:
-
-* Install gst-plugins-bad (exact package may vary):
-sudo apt install gir1.2-gst-plugins-bad-1.0
-
-* Start receiver:
-./receiver.py
-
-###################################################
-### Android sender side:
-
-* To be able to launch any activity on virtual display:
-
-adb shell settings put global force_resizable_activities 1
-
-* Ensure receiver.py is running on AGL and sender is in same subnet as receiver.
-
-* Start castscreen on Android.
-
-  - Start SenderApp on Android. (use ./open_cast_app.sh on host machine).
-  - Wait for receiver to be shown in the list.
-  - Select receiver.
-  - Press 'Start'.
-  - Use keyboard (Tab & Enter keys) to navigate through confirmation dialog.
-  - Screencast should be running now.
-
-* To cast google maps:
-
-  # Launches Google Maps on virtual display
-  # VIRTUAL_DISPLAY_ID is shown in Android application
-  ./start_maps_virtual.sh [VIRTUAL_DISPLAY_ID]
+If not, check if device and host are in the same LAN.
+Note that receiver should be started after pressing start button on device.
